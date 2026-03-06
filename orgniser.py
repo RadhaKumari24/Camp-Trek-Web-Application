@@ -4,7 +4,7 @@ from flask import session
 
 class OrgOperation:
     def connection(self):
-        con=mysql.connector.connect(host="localhost",port="3306",user="root",password="root",database="b4_full_stack")
+        con=mysql.connector.connect(host="localhost",port="3306",user="root",password="system",database="new")
         return con
 
     def org_signup(self,name,email,mobile,address,password):

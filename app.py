@@ -4,12 +4,15 @@ from encryption import Encryption
 from validation import Validation
 from orgniser import OrgOperation
 from datetime import datetime
+from flask_mail import *
+import secrets
 import razorpay
 
 app=Flask(__name__)                               # object of flask class server, routing
-app.secret_key="ghijklmnopqrstfghuy45lklk"    #any value you can put here                                        
+app.secret_key=secrets.token_hex(16)
+# "ghijklmnopqrstfghuy45lklk"    #any value you can put here                                        
 
-client = razorpay.Client(auth=("rzp_test_ncA8cq0QRQXDlq", "oAa0hlEpbvYHrg3Of8G139kE"))
+client = razorpay.Client(auth=("Your_key", "secret_key_here"))
 
 userObj = UserOperation()                                               #object for user   --ab ese clll karna hoga
 encryptObj = Encryption()                                 #object for encryption class
@@ -81,7 +84,7 @@ def user_login():
 @app.route('/user_logout')
 def user_logout():
      session.clear()  # this is destroy all activated session
-     flas("successfully logged out")
+     flash("successfully logged out")
      return redirect(url_for('index'))       #index function name hota h yha    
 
 @app.route('/user_dashboard')
@@ -373,21 +376,21 @@ def org_profile():
 def org_change_password():
      if 'org_email' in session:
           if request.method=='GET':
-               record=organiserObj.org_profile()
+               record=orgObj.org_profile()
                return render_template('org_change_password.html',record=record)
           else:
                oldPassword=request.form['oldPassword']
                newPassword=request.form['newPassword']
               #___________________validation____________________
                frmList=[oldPassword,newPassword]
-               if(validObj.empty(firmList)):
+               if(validObj.empty(frmList)):
                     flash("field can't be empty!!")
                     return redirect(url_for('org_change_password'))
 
                #----------encryption-------------------
                oldPassword=encryptObj.convert('oldPassword') 
                newPassword=encryptObj.convert('newPassword')
-               r=organiserObj.org_change_password(oldPassword,newPassword)
+               r=orgObj.org_change_password(oldPassword,newPassword)
                if(r==0):
                     flash("your old password is not valid !!")
                     return redirect(url_for('org_change_password'))
@@ -464,7 +467,7 @@ def org_camp_delete():
                return redirect(url_for('org_view_camp'))
      else:
           flash("Please login to access this page..")
-          return redirect(Url_for('org_login'))          
+          return redirect(url_for('org_login'))          
 
 
 @app.route('/org_camp_detail',methods=['GET','POST']) 
